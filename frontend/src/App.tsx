@@ -1,54 +1,19 @@
-import './App.css';
-
-import React, { useState } from 'react';
-
-import logo from './logo.svg';
+import { Box, Container, Flex, Grid, GridItem } from '@chakra-ui/react';
+import React from 'react';
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p className="header">
-          🚀 Vite + React + Typescript 🤘 & <br />
-          Eslint 🔥+ Prettier
-        </p>
-
-        <div className="body">
-          <button onClick={() => setCount((count) => count + 1)}>
-            🪂 Click me : {count}
-          </button>
-
-          <p> Don&apos;t forgot to install Eslint and Prettier in Your Vscode.</p>
-
-          <p>
-            Mess up the code in <code>App.tsx </code> and save the file.
-          </p>
-          <p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-            {' | '}
-            <a
-              className="App-link"
-              href="https://vitejs.dev/guide/features.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Vite Docs
-            </a>
-          </p>
-        </div>
-      </header>
-    </div>
-  );
+    return (
+        <Container minH="100vh" h="100%" w="100vw" m="0">
+            <Grid templateColumns="3fr 7fr" w="100vw" h="100vh">
+                <GridItem h="100%">
+                    <Box backgroundColor="white"></Box>
+                </GridItem>
+                <GridItem h="100%" backgroundColor="blue.50">
+                    <Box h="100%"></Box>
+                </GridItem>
+            </Grid>
+        </Container>
+    );
 }
 
 export default App;
