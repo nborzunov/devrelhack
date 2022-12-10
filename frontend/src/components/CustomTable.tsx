@@ -27,63 +27,40 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { SortingState } from '@tanstack/react-table';
-import React from 'react';
-import { Cell, Row, useFilters, usePagination, useSortBy, useTable } from 'react-table';
+import React, { forwardRef, useEffect, useImperativeHandle } from 'react';
+import {
+    Cell,
+    Row,
+    useFilters,
+    useGlobalFilter,
+    usePagination,
+    useSortBy,
+    useTable,
+} from 'react-table';
 
-function fuzzyTextFilterFn(rows, id, filterValue) {
-    return matchSorter(rows, filterValue, { keys: [(row) => row.values[id]] });
-}
-
-// Let the table remove the filter if the string is empty
-fuzzyTextFilterFn.autoRemove = (val) => !val;
-
-export function DefaultColumnFilter({
-    column: { filterValue, preFilteredRows, setFilter },
-}) {
-    const count = preFilteredRows.length;
-
-    return (
-        <input
-            value={filterValue || ''}
-            onChange={(e) => {
-                setFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
-            }}
-            placeholder={`Search ${count} records...`}
-        />
-    );
-}
-
-export function CustomTable({ columns, data }: any) {
+export function CustomTable({ columns, data, setFilteringState }: any) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
-    const filterTypes = React.useMemo(
-        () => ({
-            // Add a new fuzzyTextFilterFn filter type.
-            fuzzyText: fuzzyTextFilterFn,
-            // Or, override the default text filter to use
-            // "startWith"
-            text: (rows, id, filterValue) => {
-                return rows.filter((row) => {
-                    console.log(row);
-                    const rowValue = row.values[id];
-                    return rowValue !== undefined
-                        ? String(rowValue)
-                              .toLowerCase()
-                              .startsWith(String(filterValue).toLowerCase())
-                        : true;
-                });
+    const instance = useTable(
+        {
+            columns,
+            data,
+            state: {
+                sorting,
             },
-        }),
-        [],
+            onSortingChange: setSorting,
+            initialState: { pageIndex: 0 },
+        },
+
+        useFilters,
+        useGlobalFilter,
+        useSortBy,
+        usePagination,
     );
 
-    const defaultColumn = React.useMemo(
-        () => ({
-            // Let's set up our default Filter UI
-            Filter: DefaultColumnFilter,
-        }),
-        [],
-    );
+    useEffect(() => {
+        setFilteringState((prev) => ({ ...prev, setFilter: instance.setFilter }));
+    }, [instance.setFilter]);
 
     const {
         getTableProps,
@@ -100,20 +77,7 @@ export function CustomTable({ columns, data }: any) {
         previousPage,
         setPageSize,
         state: { pageIndex, pageSize },
-    } = useTable(
-        {
-            columns,
-            data,
-            state: {
-                sorting,
-            },
-            onSortingChange: setSorting,
-            initialState: { pageIndex: 0 },
-        },
-        useSortBy,
-        usePagination,
-    );
-
+    } = instance;
     // Render the UI for your table
     return (
         <Box w="1228px">

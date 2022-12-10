@@ -24,6 +24,7 @@ export function Autocomplete({
     showInput = true,
     selected,
     singleSelect = false,
+    setFilter,
 }: {
     options: Option[];
     label: string;
@@ -32,6 +33,7 @@ export function Autocomplete({
     showInput?: boolean;
     singleSelect?: boolean;
     selected: Array<string | null>;
+    setFilter?: any;
 }) {
     const [opened, setOpened] = useState(false);
 
@@ -53,6 +55,7 @@ export function Autocomplete({
         setValue((prev) => {
             return { ...prev, [field]: newValue };
         });
+        setFilter(newValue);
     }
     return (
         <Box>

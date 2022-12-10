@@ -11,9 +11,11 @@ import {
     Link,
     Tooltip,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useRef } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { MockService } from '../../helpers/Preprocessor';
+import { profileListFilterState } from '../../store/atoms';
 import { CustomTable } from '../CustomTable';
 import { ProfileFilters } from './Filters';
 
@@ -22,7 +24,8 @@ export function ProfileList() {
     const profiles = React.useMemo(() => data.data, []);
     const columns = React.useMemo(() => MockService.getColumns(), []);
 
-    console.log(profiles);
+    const [profileListFilter, setFilteringState] = useRecoilState(profileListFilterState);
+
     return (
         <Flex
             bg="blue.50"
@@ -55,7 +58,11 @@ export function ProfileList() {
                         alignSelf="flex-start"
                         w="1300"
                     >
-                        <CustomTable columns={columns} data={profiles} />
+                        <CustomTable
+                            columns={columns}
+                            data={profiles}
+                            setFilteringState={setFilteringState}
+                        />
                     </Box>
 
                     <Box w="300px">

@@ -20,6 +20,10 @@ import { Autocomplete } from './Autocomplete';
 export function ProfileFilters({ data }: { data: ProfileResponse }) {
     const [profileListFilter, setProfileListFilter] =
         useRecoilState(profileListFilterState);
+
+    function createChangeHandler(column: string) {
+        return (filterValue: any) => profileListFilter.setFilter(column, filterValue);
+    }
     return (
         <Box bg="white" py="6" px="5" borderRadius="12">
             <Stack spacing={3}>
@@ -29,6 +33,7 @@ export function ProfileFilters({ data }: { data: ProfileResponse }) {
                     field="locations"
                     placeholder="Print location or select down below"
                     selected={profileListFilter.locations}
+                    setFilter={createChangeHandler('location')}
                 />
                 <Autocomplete
                     options={data.languages}
@@ -36,6 +41,7 @@ export function ProfileFilters({ data }: { data: ProfileResponse }) {
                     field="languages"
                     placeholder="Print language or select down below"
                     selected={profileListFilter.languages}
+                    setFilter={createChangeHandler('languages')}
                 />
                 <Autocomplete
                     options={data.activities}
@@ -45,6 +51,7 @@ export function ProfileFilters({ data }: { data: ProfileResponse }) {
                     selected={[profileListFilter.activity]}
                     singleSelect={true}
                     showInput={false}
+                    setFilter={createChangeHandler('activity')}
                 />
                 <FormControl>
                     <FormLabel>Registered Date</FormLabel>

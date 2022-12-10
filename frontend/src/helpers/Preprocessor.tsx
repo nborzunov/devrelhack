@@ -1,12 +1,18 @@
+import axios from 'axios';
+
 import { ActivityColumn } from '../components/Columns/Activity';
 import { DateColumn } from '../components/Columns/Date';
 import { LanguagesColumn } from '../components/Columns/Languages';
 import { UserColumn } from '../components/Columns/User';
-import { DefaultColumnFilter } from '../components/CustomTable';
-import { Activity, ProfileResponse, ProfileRow } from '../types/types';
+import { Activity, Option, ProfileResponse, ProfileRow } from '../types/types';
 
 export class MockService {
     static getData(count: number): ProfileResponse {
+        const owner = 'rust-lang';
+        const repo = 'rust';
+        const api_url = 'http://127.0.0.1:8000/repos/' + owner + '/' + repo;
+        axios.get(api_url);
+
         const result: any = {};
         const data: ProfileRow[] = [];
 
@@ -88,6 +94,24 @@ export class MockService {
     }
 
     static getColumns() {
+        function multiSelectFilter(rows, columnIds, filterValue) {
+            console.log(rows, columnIds, filterValue);
+            return filterValue.length === 0
+                ? rows
+                : rows.filter((row: any) =>
+                      row.original[columnIds].find((language: Option) =>
+                          filterValue.includes(language.label),
+                      ),
+                  );
+        }
+
+        function selectFilter(rows, columnIds, filterValue) {
+
+            return !filterValue
+                ? rows
+                : rows.filter((row: any) => row.original[columnIds] == filterValue)
+        }
+
         return [
             {
                 Header: 'Full Name',
@@ -98,12 +122,13 @@ export class MockService {
                 Header: 'Location',
                 accessor: 'location',
                 Cell: (props: any) => props.value.label,
-                width: 120,
+                filter: multiSelectFilter,
             },
             {
                 Header: 'Languages',
                 accessor: 'languages',
                 Cell: (props: any) => <LanguagesColumn user={props.data[props.row.id]} />,
+                filter: multiSelectFilter,
             },
             {
                 Header: 'Registered Date',
@@ -113,8 +138,7 @@ export class MockService {
             {
                 Header: 'Activity',
                 accessor: 'activity',
-                Filter: DefaultColumnFilter,
-                filter: 'includes',
+                filter: selectFilter,
                 Cell: (props: any) => <ActivityColumn user={props.data[props.row.id]} />,
             },
             {

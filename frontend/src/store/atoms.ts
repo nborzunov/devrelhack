@@ -1,6 +1,15 @@
 import { atom } from 'recoil';
 
-export const profileListFilterState = atom({
+import { Activity } from '../types/types';
+
+export const profileListFilterState = atom<{
+    locations: string[];
+    languages: string[];
+    activity: Activity | null;
+    registeredDate: [Date, Date];
+    followers: [number | null, number | null];
+    setFilter: any;
+}>({
     key: 'profileListFilterState',
     default: {
         locations: [],
@@ -8,5 +17,6 @@ export const profileListFilterState = atom({
         activity: null,
         registeredDate: [new Date(), new Date()],
         followers: [null, null],
+        setFilter: () => {},
     },
 });
