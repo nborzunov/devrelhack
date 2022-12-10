@@ -11,7 +11,17 @@ export class MockService {
         const owner = 'rust-lang';
         const repo = 'rust';
         const api_url = 'http://127.0.0.1:8000/repos/' + owner + '/' + repo;
-        axios.get(api_url);
+
+        const headers = {
+            'Content-Type': 'text/plain',
+        };
+
+        axios.get(api_url, {
+            // headers: {
+            //     'Access-Control-Allow-Origin': 'http://127.0.0.1:8080',
+            // },
+        });
+        // fetch(api_url).then(() => {});
 
         const result: any = {};
         const data: ProfileRow[] = [];
@@ -106,10 +116,9 @@ export class MockService {
         }
 
         function selectFilter(rows, columnIds, filterValue) {
-
             return !filterValue
                 ? rows
-                : rows.filter((row: any) => row.original[columnIds] == filterValue)
+                : rows.filter((row: any) => row.original[columnIds] == filterValue);
         }
 
         return [
