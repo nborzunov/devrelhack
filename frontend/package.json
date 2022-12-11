@@ -16,6 +16,8 @@
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
         "@nivo/pie": "^0.80.0",
+        "@progress/kendo-licensing": "^1.2.2",
+        "@progress/kendo-react-excel-export": "^5.9.0",
         "@tanstack/react-table": "^8.7.0",
         "axios": "^1.2.1",
         "chakra-dayzed-datepicker": "^0.2.5",
@@ -23,12 +25,16 @@
         "date-fns": "^2.29.3",
         "dayjs": "^1.11.7",
         "dayzed": "^3.2.3",
+        "exceljs": "^4.3.0",
+        "file-saver": "^2.0.5",
         "framer-motion": "^7.6.19",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.4.5",
         "react-table": "^7.8.0",
-        "recoil": "^0.7.6"
+        "recoil": "^0.7.6",
+        "sheetjs-style": "^0.15.8",
+        "xlsx": "^0.18.5"
     },
     "devDependencies": {
         "@types/react": "^17.0.38",

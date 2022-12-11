@@ -53,8 +53,6 @@ export function Autocomplete({
                 ? [...selected, option.label]
                 : [...selected].filter((item) => item !== option.label);
         }
-
-        console.log(newValue);
         setValue((prev) => {
             return { ...prev, [field]: newValue };
         });
@@ -62,7 +60,6 @@ export function Autocomplete({
     }
 
     function handleChangeMultiSelect(value: any) {
-        console.log(value);
         setValue((prev) => {
             return { ...prev, [field]: value };
         });
@@ -94,20 +91,23 @@ export function Autocomplete({
                 <CheckboxGroup colorScheme="cyan">
                     <Stack spacing={1}>
                         {(opened ? optionsToView : optionsToView.slice(0, 5)).map(
-                            (option) => (
-                                <Checkbox
-                                    key={option.label}
-                                    isChecked={option.selected}
-                                    onChange={(e) =>
-                                        handleChange(option, e.target.checked)
-                                    }
-                                >
-                                    {option.label}{' '}
-                                    <Text as="span" color="gray.400">
-                                        ({option.count})
-                                    </Text>
-                                </Checkbox>
-                            ),
+                            (option) =>
+                                option.count >= 1 && (
+                                    <Checkbox
+                                        key={option.label}
+                                        isChecked={option.selected}
+                                        onChange={(e) =>
+                                            handleChange(option, e.target.checked)
+                                        }
+                                    >
+                                        {option.label}{' '}
+                                        {option.count > 1 && (
+                                            <Text as="span" color="gray.400">
+                                                ({option.count})
+                                            </Text>
+                                        )}
+                                    </Checkbox>
+                                ),
                         )}
                     </Stack>
                 </CheckboxGroup>

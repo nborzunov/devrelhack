@@ -14,7 +14,6 @@ export class DataService {
         return axios
             .get(api_url)
             .then((res) => {
-                console.log(res.data);
                 return res.data;
             })
             .then((data) => {
@@ -39,7 +38,6 @@ export class DataService {
                     }),
                 );
 
-                console.log(data);
                 return data;
             });
     }
@@ -163,16 +161,20 @@ export class DataService {
             {
                 Header: 'Location',
                 accessor: 'location',
-                Cell: (props: any) => (
-                    <Text
-                        whiteSpace="nowrap"
-                        textOverflow="ellipsis"
-                        maxWidth="140px"
-                        overflow="hidden"
-                    >
-                        {props.value.charAt(0).toUpperCase() + props.value.slice(1)}
-                    </Text>
-                ),
+                Cell: (props: any) =>
+                    props.value ? (
+                        <Text
+                            whiteSpace="nowrap"
+                            textOverflow="ellipsis"
+                            maxWidth="140px"
+                            overflow="hidden"
+                        >
+                            {props.value.charAt(0).toUpperCase() + props.value.slice(1)}
+                        </Text>
+                    ) : (
+                        <Text color="gray.500">Not defined</Text>
+                    ),
+
                 filter: multiSelectFilter,
             },
             {

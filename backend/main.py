@@ -142,10 +142,8 @@ def get_users(count, octokit, contributors_url, owner, data, length, locations, 
     languages_map = Manager().dict()
     activities_map = Manager().dict({"High": 0, "Medium": 0, "Low": 0})
 
-    # count // 100
-    while page < 1:
-        # TODO: change to 100
-        contributors = octokit.get(f"{contributors_url}?per_page=10&page={page + 1}")
+    while page < count // 100:
+        contributors = octokit.get(f"{contributors_url}?per_page=100&page={page + 1}")
 
         with Pool(60) as p:
             copier = functools.partial(get_contributor, octokit=octokit, owner=owner, locations_map=locations_map, languages_map=languages_map, activities_map=activities_map)

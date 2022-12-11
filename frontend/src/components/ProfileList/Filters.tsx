@@ -55,7 +55,7 @@ export function ProfileFilters({ data }: { data: ProfileResponse | null }) {
                         showInput={false}
                         setFilter={createChangeHandler('activity')}
                     />
-                    <FormControl>
+                    {/* <FormControl>
                         <FormLabel>Registered Date</FormLabel>
                         <RangeDatepicker
                             selectedDates={profileListFilter.registeredDate}
@@ -92,7 +92,7 @@ export function ProfileFilters({ data }: { data: ProfileResponse | null }) {
                             <Input placeholder="0" colorScheme="cyan" />
                             <Input placeholder="2157" colorScheme="cyan" />
                         </Flex>
-                    </FormControl>
+                    </FormControl> */}
 
                     <FormControl>
                         <FormLabel>Email</FormLabel>

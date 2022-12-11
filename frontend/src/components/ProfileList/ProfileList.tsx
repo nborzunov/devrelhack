@@ -7,13 +7,13 @@ import {
     Heading,
     Input,
     InputGroup,
-    InputRightAddon,
     InputRightElement,
-    Link,
     Skeleton,
     Text,
     Tooltip,
 } from '@chakra-ui/react';
+import Excel from 'exceljs';
+import { saveAs } from 'file-saver';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -37,6 +37,7 @@ export function ProfileList() {
 
     const [owner, setOwner] = React.useState('');
     const [repo, setRepo] = React.useState('');
+
     function handleSearch() {
         const regex = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)/;
 
@@ -52,13 +53,115 @@ export function ProfileList() {
 
         DataService.getRequest(owner, repo)
             .then((res) => {
-                console.log(res, DataService.getData(10));
                 setData(res);
             })
             .finally(() => {
                 setIsLoaded(true);
             });
     }
+
+    const workbook = new Excel.Workbook();
+
+    const exportData = async () => {
+        try {
+            // creating one worksheet in workbook
+            const worksheet = workbook.addWorksheet('Worksheet - 1');
+
+            // add worksheet columns
+            // each columns contains header and its mapping key from data
+            const columns = [
+                { header: 'Full Name', key: 'fullName' },
+                { header: 'Location', key: 'location' },
+                { header: 'Languages', key: 'languages' },
+                { header: 'Registration Date', key: 'createdAt' },
+                { header: 'Activity', key: 'activity' },
+                { header: 'Followers', key: 'followers' },
+                { header: 'Email', key: 'email' },
+                { header: 'Profile Url', key: 'profileSrc' },
+            ];
+            worksheet.columns = columns;
+
+            // updated the font for first row.
+            worksheet.getRow(1).font = { bold: true };
+
+            // loop through all of the columns and set the alignment with width.
+
+            const result = profiles.filter((item) => {
+                if (!profileListFilter.hasEmail && !item.email) {
+                    return false;
+                }
+
+                if (
+                    profileListFilter.languages.length &&
+                    !item.languages.find((language: any) =>
+                        profileListFilter.languages.includes(language),
+                    )
+                ) {
+                    return false;
+                }
+
+                if (
+                    profileListFilter.locations.length &&
+                    !profileListFilter.locations.find(
+                        (location: any) => item.location == location,
+                    )
+                ) {
+                    return false;
+                }
+
+                if (
+                    profileListFilter.activity &&
+                    profileListFilter.activity !== item.activity
+                ) {
+                    return false;
+                }
+
+                return true;
+            });
+            worksheet.columns.forEach((column) => {
+                column.width = column.header.length + 5;
+                column.alignment = { horizontal: 'center' };
+            });
+
+            // loop through data and add each one to worksheet
+            result.forEach((singleData) => {
+                worksheet.addRow(singleData);
+            });
+
+            // loop through all of the rows and set the outline style.
+            worksheet.eachRow({ includeEmpty: false }, (row) => {
+                // store each cell to currentCell
+                const currentCell = row._cells;
+
+                // loop through currentCell to apply border only for the non-empty cell of excel
+                currentCell.forEach((singleCell) => {
+                    // store the cell address i.e. A1, A2, A3, B1, B2, B3, ...
+                    const cellAddress = singleCell._address;
+
+                    // apply border
+                    worksheet.getCell(cellAddress).border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' },
+                    };
+                });
+            });
+
+            // write the content using writeBuffer
+            const buf = await workbook.xlsx.writeBuffer();
+
+            // download the processed file
+            saveAs(new Blob([buf]), `${owner}/${repo}.xlsx`);
+        } catch (error) {
+            console.error('<<<ERRROR>>>', error);
+            console.error('Something Went Wrong', error.message);
+        } finally {
+            // removing worksheet's instance to create new one
+            workbook.removeWorksheet('Worksheet - 1');
+        }
+    };
+
     return (
         <Flex
             bg="blue.50"
@@ -104,7 +207,9 @@ export function ProfileList() {
                                 repository
                             </Heading>
                             <Tooltip label="Save users to file">
-                                <Button colorScheme="blue">Export to Excel</Button>
+                                <Button colorScheme="blue" onClick={exportData}>
+                                    Export to Excel
+                                </Button>
                             </Tooltip>
                         </Flex>
                     </Box>
@@ -135,7 +240,7 @@ export function ProfileList() {
 
                     <Fade in={loading}>
                         <Skeleton borderRadius="12" isLoaded={isLoaded}>
-                            <Box w="300px" minH="941px">
+                            <Box w="300px" minH="750px">
                                 <ProfileFilters data={data} />
                             </Box>
                         </Skeleton>
