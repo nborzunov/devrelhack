@@ -38,7 +38,7 @@ import {
     useTable,
 } from 'react-table';
 
-export function CustomTable({ columns, data, setFilteringState }: any) {
+export function CustomTable({ columns, data, setFilteringState, minH }: any) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const instance = useTable(
@@ -80,7 +80,7 @@ export function CustomTable({ columns, data, setFilteringState }: any) {
     } = instance;
     // Render the UI for your table
     return (
-        <Box w="1228px">
+        <Flex justifyContent="space-between" flexDir="column" minH={minH}>
             <Table {...getTableProps()}>
                 <Thead>
                     {headerGroups.map((headerGroup) => (
@@ -91,6 +91,9 @@ export function CustomTable({ columns, data, setFilteringState }: any) {
                                     {...column.getHeaderProps(
                                         column.getSortByToggleProps(),
                                     )}
+                                    px="2"
+                                    fontSize="sm"
+                                    fontWeight="bold"
                                 >
                                     <Flex alignItems="center">
                                         {column.render('Header')}
@@ -116,7 +119,7 @@ export function CustomTable({ columns, data, setFilteringState }: any) {
                             <Tr {...row.getRowProps()}>
                                 {row.cells.map((cell: Cell) => {
                                     return (
-                                        <Td {...cell.getCellProps()}>
+                                        <Td {...cell.getCellProps()} px="2">
                                             {cell.render('Cell')}
                                         </Td>
                                     );
@@ -213,6 +216,6 @@ export function CustomTable({ columns, data, setFilteringState }: any) {
                     </Tooltip>
                 </Flex>
             </Flex>
-        </Box>
+        </Flex>
     );
 }

@@ -12,10 +12,10 @@ export interface ProfileMainInfo {
     photoSrc: string;
     profileSrc: string;
     fullName: string;
-    location: Option;
-    languages: Option[];
+    location: string;
+    languages: string[];
     activity?: Activity;
-    commits?: number;
+    commits: number;
 }
 
 export interface ProfileDetails extends ProfileMainInfo {

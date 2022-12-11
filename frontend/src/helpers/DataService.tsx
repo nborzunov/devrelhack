@@ -1,3 +1,5 @@
+import { EmailIcon } from '@chakra-ui/icons';
+import { Flex, Link, Text } from '@chakra-ui/react';
 import axios from 'axios';
 
 import { ActivityColumn } from '../components/Columns/Activity';
@@ -6,23 +8,43 @@ import { LanguagesColumn } from '../components/Columns/Languages';
 import { UserColumn } from '../components/Columns/User';
 import { Activity, Option, ProfileResponse, ProfileRow } from '../types/types';
 
-export class MockService {
+export class DataService {
+    static getRequest(owner: string, repo: string): Promise<ProfileResponse> {
+        const api_url = `http://127.0.0.1:8000/repos/${owner}/${repo}`;
+        return axios
+            .get(api_url)
+            .then((res) => {
+                console.log(res.data);
+                return res.data;
+            })
+            .then((data) => {
+                data.languages = data.languages.map(
+                    ([label, count]: [string, number]) => ({
+                        label,
+                        count,
+                    }),
+                );
+
+                data.activities = data.activities.map(
+                    ([label, count]: [string, number]) => ({
+                        label,
+                        count,
+                    }),
+                );
+
+                data.locations = data.locations.map(
+                    ([label, count]: [string, number]) => ({
+                        label,
+                        count,
+                    }),
+                );
+
+                console.log(data);
+                return data;
+            });
+    }
+
     static getData(count: number): ProfileResponse {
-        const owner = 'rust-lang';
-        const repo = 'rust';
-        const api_url = 'http://127.0.0.1:8000/repos/' + owner + '/' + repo;
-
-        const headers = {
-            'Content-Type': 'text/plain',
-        };
-
-        axios.get(api_url, {
-            // headers: {
-            //     'Access-Control-Allow-Origin': 'http://127.0.0.1:8080',
-            // },
-        });
-        // fetch(api_url).then(() => {});
-
         const result: any = {};
         const data: ProfileRow[] = [];
 
@@ -105,20 +127,31 @@ export class MockService {
 
     static getColumns() {
         function multiSelectFilter(rows, columnIds, filterValue) {
-            console.log(rows, columnIds, filterValue);
             return filterValue.length === 0
                 ? rows
-                : rows.filter((row: any) =>
-                      row.original[columnIds].find((language: Option) =>
-                          filterValue.includes(language.label),
-                      ),
-                  );
+                : rows.filter((row: any) => {
+                      const value = row.original[columnIds[0]];
+
+                      if (Array.isArray(value)) {
+                          return value.find((language: Option) =>
+                              filterValue.includes(language),
+                          );
+                      } else {
+                          return filterValue.includes(value);
+                      }
+                  });
         }
 
         function selectFilter(rows, columnIds, filterValue) {
             return !filterValue
                 ? rows
                 : rows.filter((row: any) => row.original[columnIds] == filterValue);
+        }
+
+        function emailFilter(rows, columnIds, filterValue) {
+            return !filterValue
+                ? rows
+                : rows.filter((row: any) => row.original[columnIds]);
         }
 
         return [
@@ -130,7 +163,16 @@ export class MockService {
             {
                 Header: 'Location',
                 accessor: 'location',
-                Cell: (props: any) => props.value.label,
+                Cell: (props: any) => (
+                    <Text
+                        whiteSpace="nowrap"
+                        textOverflow="ellipsis"
+                        maxWidth="140px"
+                        overflow="hidden"
+                    >
+                        {props.value.charAt(0).toUpperCase() + props.value.slice(1)}
+                    </Text>
+                ),
                 filter: multiSelectFilter,
             },
             {
@@ -142,7 +184,7 @@ export class MockService {
             {
                 Header: 'Registered Date',
                 accessor: 'createdAt',
-                Cell: (props: any) => <DateColumn value={props.value} />,
+                Cell: (props: any) => <DateColumn value={props.value || 'Not defined'} />,
             },
             {
                 Header: 'Activity',
@@ -156,6 +198,31 @@ export class MockService {
                 meta: {
                     isNumeric: true,
                 },
+            },
+            {
+                Header: 'Email',
+                accessor: 'email',
+                Cell: (props: any) => (
+                    <>
+                        {props.value ? (
+                            <Link href={`mailto: ${props.value}`}>
+                                <Flex alignItems="center">
+                                    <Text
+                                        mr="2"
+                                        fontWeight="semibold"
+                                        title={props.value}
+                                    >
+                                        {props.value}
+                                    </Text>
+                                    <EmailIcon />
+                                </Flex>
+                            </Link>
+                        ) : (
+                            <Text color="gray.500">Not defined</Text>
+                        )}
+                    </>
+                ),
+                filter: emailFilter,
             },
         ];
     }

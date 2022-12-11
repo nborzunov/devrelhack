@@ -12,6 +12,7 @@ import {
     Stack,
     Text,
 } from '@chakra-ui/react';
+import { GroupBase, Select } from 'chakra-react-select';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -50,24 +51,43 @@ export function Autocomplete({
         } else {
             newValue = value
                 ? [...selected, option.label]
-                : selected.filter((item) => item !== option.label);
+                : [...selected].filter((item) => item !== option.label);
         }
+
+        console.log(newValue);
         setValue((prev) => {
             return { ...prev, [field]: newValue };
         });
         setFilter(newValue);
+    }
+
+    function handleChangeMultiSelect(value: any) {
+        console.log(value);
+        setValue((prev) => {
+            return { ...prev, [field]: value };
+        });
+        setFilter(selected);
     }
     return (
         <Box>
             <FormControl>
                 <FormLabel>{label}</FormLabel>
                 {showInput && (
-                    <InputGroup>
-                        <Input placeholder="Search..." />
-                        <InputRightElement>
-                            <SearchIcon color="cyan.500" />
-                        </InputRightElement>
-                    </InputGroup>
+                    // <InputGroup>
+                    //     <Input placeholder="Search..." />
+                    //     <InputRightElement>
+                    //         <SearchIcon color="cyan.500" />
+                    //     </InputRightElement>
+                    // </InputGroup>
+                    <Select<Option, true, GroupBase<Option>>
+                        isMulti
+                        name="colors"
+                        options={optionsToView}
+                        placeholder="Search..."
+                        closeMenuOnSelect={false}
+                        value={optionsToView.filter((option) => option.selected)}
+                        onChange={handleChangeMultiSelect}
+                    />
                 )}
             </FormControl>
             <Box my="2">

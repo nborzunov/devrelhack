@@ -7,7 +7,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 
 import App from './App';
-import { ProfileDetails } from './components/ProfileDetails';
+import { ProfileDetails } from './components/ProfileDetails/ProfileDetails';
 import { ProfileList } from './components/ProfileList/ProfileList';
 
 const theme = extendTheme({

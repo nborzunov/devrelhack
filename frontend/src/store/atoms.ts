@@ -8,15 +8,17 @@ export const profileListFilterState = atom<{
     activity: Activity | null;
     registeredDate: [Date, Date];
     followers: [number | null, number | null];
+    hasEmail: boolean;
     setFilter: any;
 }>({
     key: 'profileListFilterState',
     default: {
         locations: [],
-        languages: ['Java'],
+        languages: [],
         activity: null,
         registeredDate: [new Date(), new Date()],
         followers: [null, null],
+        hasEmail: false,
         setFilter: () => {},
     },
 });
